@@ -1,0 +1,26 @@
+{
+  "data": {
+    "input": {
+      "name_value": "Camilo",
+      "email_value": "aplcargo@efrouting.com",
+      "password": "Temporal#1",
+      "message_value": "Problema al registrar una cuenta nueva. Aparece un error",
+      "login_input_name":"Log in",
+      "routes_input_name":"Routes",
+      "new_route_input_name":"New route",
+      "trailer_type_input_name":"Trailer type only",
+      "trailer_value":"Van",
+      "origin_value":"Chicago, IL",
+      "days_on_route_value":"5-8",
+      "continue_input_name":"Continue",
+      "edit_origin_type":"Tulsa",
+      "edit_origin_value":"Tulsa, OK",
+      "edit_time_value":"10:00",
+      "path_file": "src/test/resources/files/test.pdf"
+    },
+    "output": {
+      "home_value": "Home",
+      "routes_value": "New route"
+    }
+  }
+}

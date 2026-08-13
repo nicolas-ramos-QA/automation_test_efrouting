@@ -1,0 +1,36 @@
+{
+  "data": {
+    "environments": {
+      "QA": {
+        "url": "https://efdata-qa.efrouting.com/login",
+        "email": "apl@test.com",
+        "password": "Test123##"
+      },
+      "PRODUCCION": {
+        "url": "https://efdata.efrouting.com/login",
+        "email": "aplcargo@efrouting.com",
+        "password": "Temporal#1"
+      }
+    },
+    "input": {
+      "name_value": "Camilo",
+      "email_value": "aplcargo@efrouting.com",
+      "password": "Temporal#1",
+      "message_value": "Problema al registrar una cuenta nueva. Aparece un error",
+      "login_input_name":"Log in",
+      "routes_input_name":"Routes",
+      "new_route_input_name":"New route",
+      "trailer_type_input_name":"Trailer type only",
+      "trailer_value":"Van",
+      "origin_value":"Chicago, IL",
+      "destination_value":"Dallas, TX",
+      "days_on_route_value":"5-8",
+      "continue_input_name":"Continue",
+      "path_file": "src/test/resources/files/test.pdf"
+    },
+    "output": {
+      "home_value": "Home",
+      "routes_value": "New route"
+    }
+  }
+}

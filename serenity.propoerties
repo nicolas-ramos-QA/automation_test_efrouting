@@ -1,0 +1,3 @@
+serenity.project.name = Atomation Test efRouting
+serenity.take.screenshots = FOR_EACH_ACTION
+serenity.console.colors = true
