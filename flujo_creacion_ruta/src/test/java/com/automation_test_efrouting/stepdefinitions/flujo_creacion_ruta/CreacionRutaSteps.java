@@ -72,6 +72,11 @@ public class CreacionRutaSteps {
         triHaulRoute.seleccionaSegundaRutaTriHaul(actorName);
     }
 
+    @And("^(.*) selecciona una ruta sugerida de tipo \"(.*)\"$")
+    public void seleccionaRutaSugeridaDeTipo(String actorName, String tipoRuta) {
+        triHaulRoute.seleccionaRutaSugeridaDeTipo(actorName, tipoRuta);
+    }
+
     @And("^(.*) edita la última línea de la ruta")
     public void editaUltimaLineaRuta(String actorName) {
         editLane.editaUltimaLinea(actorName);
