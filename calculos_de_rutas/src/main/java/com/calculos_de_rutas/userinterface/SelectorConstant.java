@@ -38,17 +38,18 @@ public class SelectorConstant {
     /**
      * Secciones de rutas sugeridas, en orden de preferencia.
      * Hay que hacer clic en una tarjeta para expandirla; recién ahí aparece "Try this route".
+     * Incluye Loops y variantes de Best Choice (a veces con ★ delante).
      */
     public static final String[] ROUTE_SECTION_LABELS = {
-            "Tri-hauls", "Bi-hauls", "Best Choice", "Best choice", "Direct Routes"
+            "Tri-hauls", "Bi-hauls", "Best Choice", "Best choice", "Loops", "Direct Routes"
     };
 
     /**
-     * Contenedor de la sección: el h2 con el título y su siguiente bloque de tarjetas.
-     * El título puede ir en un span interno (Tri-hauls / Bi-hauls / Best Choice).
+     * Contenedor de la sección: h2 cuyo texto contiene la etiqueta.
+     * Usa contains para soportar "★ Best Choice" y textos similares.
      */
     public static final String ROUTE_SECTION_HEADER =
-            "//h2[.//span[normalize-space()='%1$s'] or normalize-space()='%1$s']";
+            "//h2[.//span[contains(normalize-space(.),'%1$s')] or contains(normalize-space(.),'%1$s')]";
 
     /**
      * Zona clickeable de una tarjeta para desplegarla (cursor-pointer dentro de data-index).

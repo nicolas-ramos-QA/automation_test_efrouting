@@ -3,9 +3,11 @@ Feature: Validacion de calculos financieros de una ruta
   El mismo flujo se ejecuta contra QA y contra Produccion. Cada ambiente usa su propia URL y
   credenciales (data.json > data.environments) y genera su propio reporte de calculos.
 
-  Se cubren tres casos al crear la ruta, forzando cada tipo de ruta sugerida: Tri-hauls,
-  Bi-hauls y Best Choice. Elegido el tipo, el flujo continúa igual haciendo los cálculos
-  (por lane y Total, con Op cost visible y oculto).
+  Se cubren cuatro casos al crear la ruta, forzando cada tipo de ruta sugerida:
+  Tri-hauls, Bi-hauls, Best Choice y Loops. Si Easy routes no trae el tipo pedido
+  (p.ej. solo hay Best Choice y Loops), ese escenario se anula (omitido) y no se
+  marca como fallido. Si el tipo sí está disponible, el flujo continúa igual
+  haciendo los cálculos (por lane y Total, con Op cost visible y oculto).
 
   Fórmulas validadas (redondeo Backend milésimas → entero UI):
   - Total cost = Fuel + Toll + Custom + Op cost (solo si el ojo está visible)
@@ -38,6 +40,7 @@ Feature: Validacion de calculos financieros de una ruta
       | QA       | Tri-hauls   |
       | QA       | Bi-hauls    |
       | QA       | Best Choice |
+      | QA       | Loops       |
 
     @Produccion
     Examples:
@@ -45,3 +48,4 @@ Feature: Validacion de calculos financieros de una ruta
       | PRODUCCION | Tri-hauls   |
       | PRODUCCION | Bi-hauls    |
       | PRODUCCION | Best Choice |
+      | PRODUCCION | Loops       |

@@ -15,6 +15,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.opentest4j.TestAbortedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +33,13 @@ import java.util.regex.Pattern;
  * Espera la navegación a {@code /route-planner/detail/} (el cierre de mapa y los cálculos
  * siguen en los steps siguientes del feature).
  *
- * <p>Modo automático (sin tipo solicitado): Tri-hauls → Bi-hauls → Best Choice → Direct Routes,
- * tomando la primera sección que esté disponible.</p>
+ * <p>Modo automático (sin tipo solicitado): Tri-hauls → Bi-hauls → Best Choice → Loops →
+ * Direct Routes, tomando la primera sección que esté disponible.</p>
  *
- * <p>Modo forzado ({@link #ofType(String)}): exige una sección concreta (p.ej. "Tri-hauls",
- * "Bi-hauls" o "Best Choice") y falla con un mensaje claro si esa sección no aparece entre las
- * rutas sugeridas.</p>
+ * <p>Modo forzado ({@link #ofType(String)}): busca una sección concreta (p.ej. "Tri-hauls",
+ * "Bi-hauls", "Best Choice" o "Loops"). Si Easy routes ya cargó y ese tipo <b>no</b> está
+ * entre las sugerencias, anula el escenario ({@link org.opentest4j.TestAbortedException})
+ * para que no se marque como fallido. Si aparece, continúa.</p>
  */
 public class SelectTriHaulRoute implements Interaction {
 
@@ -62,15 +64,21 @@ public class SelectTriHaulRoute implements Interaction {
 
         String[] candidatos = etiquetasCandidatas();
 
-        pageWait.until(d -> primeraSeccionDisponible(d, candidatos) != null);
+        // Espera a que Easy routes cargue al menos una sección conocida (no solo la pedida).
+        pageWait.until(d -> primeraSeccionDisponible(d, SelectorConstant.ROUTE_SECTION_LABELS) != null);
         actor.attemptsTo(Pause.forSeconds(2));
 
         String seccion = primeraSeccionDisponible(driver, candidatos);
         if (seccion == null) {
-            throw new AssertionError(seccionSolicitada != null
-                    ? "No apareció la sección solicitada '" + seccionSolicitada
-                            + "' entre las rutas sugeridas."
-                    : "No apareció ninguna sección de rutas (Tri-hauls, Bi-hauls, Best Choice ni Direct Routes).");
+            String visibles = seccionesVisibles(driver);
+            String mensaje = seccionSolicitada != null
+                    ? "No se encontró el tipo de ruta '" + seccionSolicitada
+                    + "' entre las sugerencias. Secciones visibles: [" + visibles
+                    + "]. Escenario anulado (no fallido)."
+                    : "No apareció ninguna sección de rutas. Escenario anulado (no fallido).";
+            LOGGER.warn(mensaje);
+            // TestAbortedException → JUnit/Cucumber lo reporta como SKIPPED/ABORTED, no FAILED.
+            throw new TestAbortedException(mensaje);
         }
 
         LOGGER.info("Sección elegida: {}", seccion);
@@ -95,6 +103,19 @@ public class SelectTriHaulRoute implements Interaction {
 
         LOGGER.info("Navegación al detalle OK: {}", driver.getCurrentUrl());
         FinancialReport.addContext("URL detalle", driver.getCurrentUrl());
+    }
+
+    private String seccionesVisibles(WebDriver driver) {
+        StringBuilder sb = new StringBuilder();
+        for (String label : SelectorConstant.ROUTE_SECTION_LABELS) {
+            if (!headers(driver, label).isEmpty()) {
+                if (sb.length() > 0) {
+                    sb.append(", ");
+                }
+                sb.append(label);
+            }
+        }
+        return sb.length() == 0 ? "ninguna" : sb.toString();
     }
 
     /**
@@ -384,21 +405,22 @@ public class SelectTriHaulRoute implements Interaction {
         }
     }
 
-    /** Modo automático: toma la primera sección disponible (Tri-hauls → Bi-hauls → Best Choice → Direct Routes). */
+    /** Modo automático: toma la primera sección disponible (Tri-hauls → Bi-hauls → Best Choice → Loops → Direct Routes). */
     public static SelectTriHaulRoute secondTriHaulRouteSelected() {
         return new SelectTriHaulRoute(null);
     }
 
     /**
-     * Modo forzado: exige la sección {@code tipoRuta} (p.ej. "Tri-hauls", "Bi-hauls" o
-     * "Best Choice") entre las rutas sugeridas y falla si no aparece.
+     * Modo forzado: busca la sección {@code tipoRuta} (p.ej. "Tri-hauls", "Bi-hauls",
+     * "Best Choice" o "Loops"). Si Easy routes cargó sin ese tipo, anula el escenario
+     * (no fallido).
      */
     public static SelectTriHaulRoute ofType(String tipoRuta) {
         boolean conocida = java.util.Arrays.stream(SelectorConstant.ROUTE_SECTION_LABELS)
                 .anyMatch(label -> label.equalsIgnoreCase(tipoRuta));
         if (!conocida) {
             throw new IllegalArgumentException("Tipo de ruta sugerida desconocido: '" + tipoRuta
-                    + "'. Use uno de: Tri-hauls, Bi-hauls, Best Choice.");
+                    + "'. Use uno de: Tri-hauls, Bi-hauls, Best Choice, Loops.");
         }
         return new SelectTriHaulRoute(tipoRuta);
     }

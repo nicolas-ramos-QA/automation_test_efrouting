@@ -1,6 +1,6 @@
 # calculos_de_rutas
 
-Automatización E2E (Serenity BDD + Screenplay + Cucumber) que replica el flujo de creación de ruta de `automation_test_efrouting` **hasta "Try this route"** y, en lugar de validar millas, valida la integridad financiera Backend ↔ Frontend.
+Automatización E2E (Serenity BDD + Screenplay + Cucumber) que replica el flujo del proyecto hermano `flujo_creacion_ruta` **hasta "Try this route"** y, en lugar de validar millas, valida la integridad financiera Backend ↔ Frontend.
 
 El mismo escenario se ejecuta contra **QA** y contra **Producción**, cada uno con su URL, sus credenciales y su propio reporte.
 
@@ -95,9 +95,9 @@ La tabla real es `table[data-cy='lanes-table']`: `thead th[data-column-id]`, fil
 
 Las columnas se ubican por la posición que ocupan en el `thead`, reconocidas por su `data-column-id` o, si el frontend lo cambia, por el rótulo visible. Por eso alcanza con actualizar el enum `models/FinancialColumn` cuando cambia la convención de nombres.
 
-## Diferencias vs automation_test_efrouting
+## Diferencias vs flujo_creacion_ruta
 
 | Incluido | Omitido |
 |----------|---------|
-| Login → Routes → New route → Trailer → form → Continue → Tri-hauls → **Try this route** | Edit lane |
+| Login → Routes → New route → Trailer → form → Continue → tipo sugerido (Tri-hauls / Bi-hauls / Best Choice / Loops) → **Try this route**. Si el tipo no aparece, el escenario se omite (no falla). | Edit lane |
 | Validación financiera API ↔ UI en QA y Producción | Validación de millas (`LaneMileage` / `GeoDistance`) |
