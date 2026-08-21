@@ -1,0 +1,30 @@
+{
+  "data": {
+    "input": {
+      "email_value": "aplcargo@efrouting.com",
+      "password": "Temporal#1",
+      "login_input_name": "Log in",
+      "loadboard_input_name": "Loadboard",
+      "city_pairs": [
+        { "origin": "Chicago, IL", "destination": "Miami, FL" },
+        { "origin": "Chicago, IL", "destination": "Atlanta, GA" },
+        { "origin": "Chicago, IL", "destination": "Dallas, TX" },
+        { "origin": "Chicago, IL", "destination": "Houston, TX" },
+        { "origin": "Dallas, TX", "destination": "Atlanta, GA" },
+        { "origin": "Houston, TX", "destination": "Atlanta, GA" },
+        { "origin": "Atlanta, GA", "destination": "Miami, FL" },
+        { "origin": "Dallas, TX", "destination": "Los Angeles, CA" },
+        { "origin": "Los Angeles, CA", "destination": "Dallas, TX" },
+        { "origin": "New York, NY", "destination": "Atlanta, GA" },
+        { "origin": "Memphis, TN", "destination": "Chicago, IL" },
+        { "origin": "Indianapolis, IN", "destination": "Atlanta, GA" },
+        { "origin": "Chicago, IL", "destination": "New York, NY" },
+        { "origin": "Dallas, TX", "destination": "Chicago, IL" },
+        { "origin": "Atlanta, GA", "destination": "Dallas, TX" }
+      ]
+    },
+    "output": {
+      "loadboard_headline": "Find the perfect load"
+    }
+  }
+}

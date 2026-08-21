@@ -8,7 +8,7 @@ El repositorio contiene **tres proyectos Maven independientes** (cada uno con su
 |---------|------------|
 | [`flujo_creacion_ruta/`](flujo_creacion_ruta/) | Flujo de creación de ruta (Login → Routes → New route → Trailer → formulario → Continue → ruta sugerida → Edit lane) y la validación de millaje. |
 | [`calculos_de_rutas/`](calculos_de_rutas/README.md) | Mismo flujo hasta "Try this route" (Tri-hauls, Bi-hauls, Best Choice o Loops; si el tipo no aparece se omite), pero valida la **integridad financiera Backend ↔ Frontend**: Income, Fuel/Toll/Custom/Op cost, Total cost y Profit por lane y en la fila Total, con Op cost visible y oculto. Corre contra QA y Producción. |
-| [`validacion_calculadora/`](validacion_calculadora/README.md) | Login → **Loadboard** (no Routes). Base para validar la calculadora del loadboard. |
+| [`validacion_calculadora/`](validacion_calculadora/README.md) | Login → **Loadboard** (no Routes). Abre cargas con Rate en verde y valida las **5 fórmulas** del modal *Calculate profit*: `Income / Distance = RPM`, `Income / Days on Route = Income per day`, `Income - Total costs = Current profit`, `Current profit / Total Distance = Profit / mile` y `Current profit / Income = Profit %`. |
 
 ## Requisitos previos
 
@@ -85,7 +85,12 @@ cd validacion_calculadora
 mvn test "-Dtest=RunnerValidacionCalculadora"
 ```
 
-Reporte Serenity: `validacion_calculadora/target/site/serenity/index.html`.
+Cada corrida genera:
+
+- **Reporte HTML propio**, con una sección por fórmula (operación, resultado exacto sin redondear, valor de la UI y Δ) y la captura del modal: `validacion_calculadora/target/reportes/reporte-calculadora-ultimo.html`. Se abre solo al terminar.
+- **Reporte Serenity estándar**: `validacion_calculadora/target/site/serenity/index.html`.
+
+Si el aviso del Load details sale en rojo (*Charge … to break even*), esa carga se descarta y se prueba con otra en verde; tras 5 rojas seguidas cambia el par origen/destino. El tope de tiempo del paso es de 10 minutos y se ajusta con `-Dcalculadora.timeout.min`.
 
 ## Datos de prueba
 
