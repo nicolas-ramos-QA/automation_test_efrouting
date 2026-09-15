@@ -1,9 +1,0 @@
-target/
-build/
-logs/
-.idea/
-*.iml
-.classpath
-.project
-.settings/
-*.log

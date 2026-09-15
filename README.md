@@ -2,108 +2,94 @@
 
 Automatización E2E de efRouting con **Serenity BDD + Screenplay + Cucumber** sobre Selenium/Chrome.
 
-El repositorio contiene **tres proyectos Maven independientes** (cada uno con su propio `pom.xml`):
+Un solo proyecto Maven (`pom.xml` en la raíz) y **un solo `src`**. Los tres flujos conviven como paquetes y features distintas; los casos de prueba no se mezclan: cada uno se lanza con su runner.
 
-| Carpeta | Qué valida |
-|---------|------------|
-| [`flujo_creacion_ruta/`](flujo_creacion_ruta/) | Flujo de creación de ruta (Login → Routes → New route → Trailer → formulario → Continue → ruta sugerida → Edit lane) y la validación de millaje. |
-| [`calculos_de_rutas/`](calculos_de_rutas/README.md) | Mismo flujo hasta "Try this route" (Tri-hauls, Bi-hauls, Best Choice o Loops; si el tipo no aparece se omite), pero valida la **integridad financiera Backend ↔ Frontend**: Income, Fuel/Toll/Custom/Op cost, Total cost y Profit por lane y en la fila Total, con Op cost visible y oculto. Corre contra QA y Producción. |
-| [`validacion_calculadora/`](validacion_calculadora/README.md) | Login → **Loadboard** (no Routes). Abre cargas con Rate en verde y valida las **5 fórmulas** del modal *Calculate profit*: `Income / Distance = RPM`, `Income / Days on Route = Income per day`, `Income - Total costs = Current profit`, `Current profit / Total Distance = Profit / mile` y `Current profit / Income = Profit %`. |
+| Paquete / features | Qué valida |
+|--------------------|------------|
+| `com.automation_test_efrouting` · `features/flujo_creacion_ruta` | Creación de ruta y millaje (Login → Routes → New route → Trailer → formulario → Continue → ruta sugerida → Edit lane). |
+| `com.calculos_de_rutas` · `features/calculos_de_rutas` | Integridad financiera Backend ↔ Frontend (Income, costos, Profit por lane y Total, Op visible/oculto). QA, Producción, o una **ruta ya existente**. |
+| `com.validacion_calculadora` · `features/validacion_calculadora` | Loadboard: 5 fórmulas del modal *Calculate profit*. |
+
+```
+src/
+  main/java/com/
+    automation_test_efrouting/   # flujo creación
+    calculos_de_rutas/           # cálculos financieros
+    validacion_calculadora/      # calculadora Loadboard
+  test/java/com/                 # steps, runners y unit tests de cada flujo
+  test/resources/
+    data.json                    # datos de los tres flujos
+    features/flujo_creacion_ruta/
+    features/calculos_de_rutas/
+    features/validacion_calculadora/
+```
 
 ## Requisitos previos
 
-Quien clone el repo necesita instalado localmente:
-
 1. **JDK 17** (`java -version` debe mostrar 17.x).
-2. **Apache Maven 3.8+** (`mvn -version`). El repo no trae `mvnw`, así que Maven debe estar en el `PATH`.
-3. **Google Chrome** instalado (versión reciente). Serenity descarga el `chromedriver` automáticamente (`webdriver.autodownload = true`), pero necesita el navegador real para lanzarlo.
-4. Conexión de red a los ambientes de efRouting que se van a probar:
-   - QA: `https://efdata-qa.efrouting.com`
-   - Producción: `https://efdata.efrouting.com`
-5. Credenciales válidas de acceso a esos ambientes (ver [Datos de prueba](#datos-de-prueba)).
+2. **Apache Maven 3.8+** (`mvn -version`).
+3. **Google Chrome** instalado. Serenity descarga el `chromedriver` (`webdriver.autodownload = true`).
+4. Acceso a QA (`https://efdata-qa.efrouting.com`) y/o Producción (`https://efdata.efrouting.com`).
+5. Credenciales en `src/test/resources/data.json`.
 
-## Clonar y compilar
+## Compilar
 
 ```bash
 git clone https://github.com/nicolas-ramos-QA/automation_test_efrouting.git
 cd automation_test_efrouting
-
-# Proyecto de creación de ruta y millaje
-cd flujo_creacion_ruta
-mvn -q dependency:resolve compile test-compile
-cd ..
-
-# Proyecto de cálculos financieros
-cd calculos_de_rutas
-mvn -q dependency:resolve compile test-compile
-cd ..
-
-# Proyecto de calculadora en Loadboard
-cd validacion_calculadora
 mvn -q dependency:resolve compile test-compile
 ```
+
+Todos los comandos se ejecutan **desde la raíz** del repo.
 
 ## Cómo ejecutar
 
-### flujo_creacion_ruta (creación de ruta / millaje)
+En PowerShell, entrecomillar los `-D`.
 
-```bash
-cd flujo_creacion_ruta
+### flujo_creacion_ruta (millaje)
 
-# Windows PowerShell: entrecomillar los parámetros -D
-mvn test "-Dtest=TestRunner"
-# o el runner específico del flujo de creación de ruta
+```powershell
 mvn test "-Dtest=TestRunnerFlujoCreacionRuta"
+# o
+mvn test "-Dtest=TestRunner"
 ```
-
-Reportes Serenity: `flujo_creacion_ruta/target/site/serenity/index.html`.
 
 ### calculos_de_rutas (validación financiera)
 
-```bash
-cd calculos_de_rutas
-
-# Solo QA (Tri-hauls, Bi-hauls, Best Choice y Loops; los ausentes se omiten)
+```powershell
 mvn test "-Dtest=RunnerCalculosQa"
-
-# Solo Producción
 mvn test "-Dtest=RunnerCalculosProduccion"
+mvn test "-Dtest=RunnerCalculosRutaExistente" "-Druta=https://efdata-qa.efrouting.com/route-planner/detail/3417"
 ```
 
-Cada corrida genera:
-
-- **Reporte HTML propio** (con capturas de la tabla, Op cost visible/oculto): `calculos_de_rutas/target/reportes/reporte-calculos-<ambiente>-<tipo-ruta>-ultimo.html`. Se abre automáticamente en el navegador al terminar el escenario.
-- **Reporte Serenity estándar**: `calculos_de_rutas/target/site/serenity/index.html`.
-- **Diagnóstico** (DOM y JSON capturados) en `calculos_de_rutas/target/diagnostico/`.
-
-Más detalle de qué valida y cómo leer el reporte en el [README de calculos_de_rutas](calculos_de_rutas/README.md).
+Reportes propios: `target/reportes/reporte-calculos-<ambiente>-*-ultimo.html`.
+Diagnóstico: `target/diagnostico/`.
 
 ### validacion_calculadora (Loadboard)
 
-```bash
-cd validacion_calculadora
+```powershell
 mvn test "-Dtest=RunnerValidacionCalculadora"
 ```
 
-Cada corrida genera:
+Reporte propio: `target/reportes/reporte-calculadora-ultimo.html`.
+Timeout del paso: `-Dcalculadora.timeout.min` (por defecto 10 minutos).
 
-- **Reporte HTML propio**, con una sección por fórmula (operación, resultado exacto sin redondear, valor de la UI y Δ) y la captura del modal: `validacion_calculadora/target/reportes/reporte-calculadora-ultimo.html`. Se abre solo al terminar.
-- **Reporte Serenity estándar**: `validacion_calculadora/target/site/serenity/index.html`.
+Reporte Serenity de cualquier corrida: `target/site/serenity/index.html`.
 
-Si el aviso del Load details sale en rojo (*Charge … to break even*), esa carga se descarta y se prueba con otra en verde; tras 5 rojas seguidas cambia el par origen/destino. El tope de tiempo del paso es de 10 minutos y se ajusta con `-Dcalculadora.timeout.min`.
+`mvn test` sin `-Dtest` solo toma clases `TestRunner*` (creación de ruta y el runner combinado de cálculos). Los runners `Runner*` hay que pedirlos explícitamente, igual que antes.
 
 ## Datos de prueba
 
-Las URLs, usuarios y contraseñas están en cada proyecto (`flujo_creacion_ruta`, `calculos_de_rutas`, `validacion_calculadora`) dentro de `src/test/resources/data.json`. Si las credenciales rotan o dejan de funcionar, hay que actualizarlas ahí — no hay variables de entorno de por medio.
+Un único `src/test/resources/data.json` con ambientes, formulario de ruta, pares de ciudades del Loadboard y textos de UI. Si rotan credenciales, se actualizan ahí.
 
-> Estos `data.json` están versionados con credenciales reales de QA/Producción. Este repositorio debe permanecer **privado** y solo con acceso al equipo; no lo hagas público ni lo copies a otro lugar sin limpiar antes esas contraseñas.
+> Este archivo está versionado con credenciales reales. El repositorio debe permanecer **privado**.
 
 ## Estructura de ramas
 
-- `qa`: rama de trabajo donde se sube la automatización mientras se valida. Los merges a otras ramas (`main`, `develop`, etc.) los coordina Nicolás.
+- `qa`: rama de trabajo. Los merges a otras ramas los coordina Nicolás.
 
-## Notas para quien recién clona
+## Notas
 
-- Si `mvn` falla descargando dependencias, revisa que no haya un proxy corporativo bloqueando `repo.maven.apache.org` ni los repos de `serenity-bdd`.
-- Si Chrome abre pero el test financiero no encuentra un botón/columna, primero revisa `calculos_de_rutas/target/diagnostico/*.html` (el DOM real capturado en ese punto) antes de tocar los selectores en `userinterface/SelectorConstant.java`.
-- En Windows PowerShell, los parámetros `-Dtest=...` con comas o espacios deben ir entre comillas dobles, ej. `mvn "-Dtest=A,B,C" test`.
+- Si falla la descarga de dependencias, revise proxy corporativo hacia `repo.maven.apache.org` y repos de Serenity.
+- Si el test financiero no encuentra una columna, revise `target/diagnostico/*.html` antes de tocar selectores.
+- Los paquetes de cada flujo son independientes: no se reutilizan steps ni se reescribieron los escenarios.

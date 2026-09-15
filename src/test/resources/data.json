@@ -1,0 +1,58 @@
+{
+  "data": {
+    "environments": {
+      "QA": {
+        "url": "https://efdata-qa.efrouting.com/login",
+        "email": "apl@test.com",
+        "password": "Test123##"
+      },
+      "PRODUCCION": {
+        "url": "https://efdata.efrouting.com/login",
+        "email": "aplcargo@efrouting.com",
+        "password": "Temporal#1"
+      }
+    },
+    "input": {
+      "name_value": "Camilo",
+      "email_value": "aplcargo@efrouting.com",
+      "password": "Temporal#1",
+      "message_value": "Problema al registrar una cuenta nueva. Aparece un error",
+      "login_input_name": "Log in",
+      "routes_input_name": "Routes",
+      "new_route_input_name": "New route",
+      "trailer_type_input_name": "Trailer type only",
+      "trailer_value": "Van",
+      "origin_value": "Chicago, IL",
+      "destination_value": "Dallas, TX",
+      "days_on_route_value": "5-8",
+      "continue_input_name": "Continue",
+      "edit_origin_type": "Tulsa",
+      "edit_origin_value": "Tulsa, OK",
+      "edit_time_value": "10:00",
+      "path_file": "src/test/resources/files/test.pdf",
+      "loadboard_input_name": "Loadboard",
+      "city_pairs": [
+        { "origin": "Chicago, IL", "destination": "Miami, FL" },
+        { "origin": "Chicago, IL", "destination": "Atlanta, GA" },
+        { "origin": "Chicago, IL", "destination": "Dallas, TX" },
+        { "origin": "Chicago, IL", "destination": "Houston, TX" },
+        { "origin": "Dallas, TX", "destination": "Atlanta, GA" },
+        { "origin": "Houston, TX", "destination": "Atlanta, GA" },
+        { "origin": "Atlanta, GA", "destination": "Miami, FL" },
+        { "origin": "Dallas, TX", "destination": "Los Angeles, CA" },
+        { "origin": "Los Angeles, CA", "destination": "Dallas, TX" },
+        { "origin": "New York, NY", "destination": "Atlanta, GA" },
+        { "origin": "Memphis, TN", "destination": "Chicago, IL" },
+        { "origin": "Indianapolis, IN", "destination": "Atlanta, GA" },
+        { "origin": "Chicago, IL", "destination": "New York, NY" },
+        { "origin": "Dallas, TX", "destination": "Chicago, IL" },
+        { "origin": "Atlanta, GA", "destination": "Dallas, TX" }
+      ]
+    },
+    "output": {
+      "home_value": "Home",
+      "routes_value": "New route",
+      "loadboard_headline": "Find the perfect load"
+    }
+  }
+}
