@@ -21,6 +21,10 @@
         <webdriver.driver>chrome</webdriver.driver>
         <ruta></ruta>
         <ambiente></ambiente>
+        <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
+        <sonar.projectKey>automation_test_efrouting</sonar.projectKey>
+        <sonar.projectName>automation_test_efrouting</sonar.projectName>
+        <sonar.host.url>http://localhost:9000</sonar.host.url>
     </properties>
 
     <dependencies>
@@ -219,6 +223,11 @@
                         <ambiente>${ambiente}</ambiente>
                     </systemPropertyVariables>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonar-maven-plugin.version}</version>
             </plugin>
         </plugins>
     </build>
