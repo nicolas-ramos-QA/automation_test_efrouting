@@ -31,6 +31,23 @@
       "edit_time_value": "10:00",
       "path_file": "src/test/resources/files/test.pdf",
       "loadboard_input_name": "Loadboard",
+      "filter_button_name": "Filter",
+      "filter_reset_name": "Reset",
+      "filter_fields": [
+        "Route name",
+        "Start date",
+        "End date",
+        "Origin",
+        "Destination",
+        "Driver",
+        "Trailer",
+        "Unit",
+        "Dispatcher",
+        "Equipment type",
+        "Total miles",
+        "Income"
+      ],
+      "route_planner_url": "https://efdata-qa.efrouting.com/route-planner",
       "city_pairs": [
         { "origin": "Chicago, IL", "destination": "Miami, FL" },
         { "origin": "Chicago, IL", "destination": "Atlanta, GA" },

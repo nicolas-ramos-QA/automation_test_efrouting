@@ -2,13 +2,14 @@
 
 Automatización E2E de efRouting con **Serenity BDD + Screenplay + Cucumber** sobre Selenium/Chrome.
 
-Un solo proyecto Maven (`pom.xml` en la raíz) y **un solo `src`**. Los tres flujos conviven como paquetes y features distintas; los casos de prueba no se mezclan: cada uno se lanza con su runner.
+Un solo proyecto Maven (`pom.xml` en la raíz) y **un solo `src`**. Los cuatro flujos conviven como paquetes y features distintas; los casos de prueba no se mezclan: cada uno se lanza con su runner.
 
 | Paquete / features | Qué valida |
 |--------------------|------------|
 | `com.automation_test_efrouting` · `features/flujo_creacion_ruta` | Creación de ruta y millaje (Login → Routes → New route → Trailer → formulario → Continue → ruta sugerida → Edit lane). |
 | `com.calculos_de_rutas` · `features/calculos_de_rutas` | Integridad financiera Backend ↔ Frontend (Income, costos, Profit por lane y Total, Op visible/oculto). QA, Producción, o una **ruta ya existente**. |
 | `com.validacion_calculadora` · `features/validacion_calculadora` | Loadboard: 5 fórmulas del modal *Calculate profit*. |
+| `com.filtros_de_rutas` · `features/filtros_de_rutas` | Listado Routes en QA (`/route-planner`): los 12 filtros del panel *Filter* y que el pie (Total routes, income, miles, DH, RPM) cambie. |
 
 ```
 src/
@@ -16,12 +17,14 @@ src/
     automation_test_efrouting/   # flujo creación
     calculos_de_rutas/           # cálculos financieros
     validacion_calculadora/      # calculadora Loadboard
+    filtros_de_rutas/            # filtros del listado Routes
   test/java/com/                 # steps, runners y unit tests de cada flujo
   test/resources/
-    data.json                    # datos de los tres flujos
+    data.json                    # datos de los cuatro flujos
     features/flujo_creacion_ruta/
     features/calculos_de_rutas/
     features/validacion_calculadora/
+    features/filtros_de_rutas/
 ```
 
 ## Requisitos previos
@@ -74,13 +77,23 @@ mvn test "-Dtest=RunnerValidacionCalculadora"
 Reporte propio: `target/reportes/reporte-calculadora-ultimo.html`.
 Timeout del paso: `-Dcalculadora.timeout.min` (por defecto 10 minutos).
 
+### filtros_de_rutas (listado Routes)
+
+```powershell
+mvn test "-Dtest=RunnerFiltrosDeRutas"
+```
+
+Solo QA: `https://efdata-qa.efrouting.com/route-planner`. Aplica los 12 filtros del panel.
+
+Reporte propio: `target/reportes/reporte-filtros-ultimo.html`.
+
 Reporte Serenity de cualquier corrida: `target/site/serenity/index.html`.
 
 `mvn test` sin `-Dtest` solo toma clases `TestRunner*` (creación de ruta y el runner combinado de cálculos). Los runners `Runner*` hay que pedirlos explícitamente, igual que antes.
 
 ## Datos de prueba
 
-Un único `src/test/resources/data.json` con ambientes, formulario de ruta, pares de ciudades del Loadboard y textos de UI. Si rotan credenciales, se actualizan ahí.
+Un único `src/test/resources/data.json` con ambientes, formulario de ruta, pares de ciudades del Loadboard, filtros de Routes y textos de UI. Si rotan credenciales, se actualizan ahí.
 
 > Este archivo está versionado con credenciales reales. El repositorio debe permanecer **privado**.
 
